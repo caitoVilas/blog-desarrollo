@@ -5,15 +5,21 @@ import com.blog.api.models.requests.LoginRequest;
 import com.blog.api.models.requests.UserRequest;
 import com.blog.api.models.responses.LoginResponse;
 import com.blog.api.models.responses.UserResponse;
+import com.blog.components.JwtProvider;
 import com.blog.domain.entities.ApplicationUser;
 import com.blog.domain.entities.Role;
 import com.blog.domain.repositories.RoleRepository;
 import com.blog.domain.repositories.UserRepository;
 import com.blog.infrastructure.services.contracts.LoginService;
 import com.blog.util.constants.UserConstants;
+import com.blog.util.enums.RoleName;
 import com.blog.util.map.UserMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -33,8 +39,10 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService {
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
+    private final JwtProvider jwtProvider;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -42,7 +50,7 @@ public class LoginServiceImpl implements LoginService {
         log.info("---> inicio servicio alta de usuario");
         log.info("---> validando entradas...");
         this.validateUser(request);
-        var role = roleRepository.findByAuthority("ADMIN").get();
+        var role = roleRepository.findByAuthority(RoleName.ROLE_USER);
         Set<Role> authorities = new HashSet<>();
         authorities.add(role);
         var user = ApplicationUser.builder()
@@ -58,13 +66,27 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        return null;
+        log.info("---> inicio servicio login");
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        String token = jwtProvider.generateToken(authentication);
+        var user = userRepository.findByUsername(request.getUsername()).get();
+        log.info("---> login OK");
+        return LoginResponse.builder()
+                .jwt(token)
+                .user(UserMap.mapToDto(user))
+                .build();
     }
 
     private void validateUser(UserRequest request){
         if (request.getUsername().isBlank()){
             log.error("ERROR: ".concat(UserConstants.U_NO_NAME));
             throw new BadRequestException(UserConstants.U_NO_NAME);
+        }
+        if (userRepository.existsByUsername(request.getUsername())){
+            log.error("ERROR: ".concat(UserConstants.U_NAME_EXISTS.concat(request.getUsername())));
+            throw new BadRequestException(UserConstants.U_NAME_EXISTS.concat(request.getUsername()));
         }
         if (request.getPassword().isBlank()){
             log.error("ERROR: ".concat(UserConstants.U_NO_PASS));

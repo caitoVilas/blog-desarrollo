@@ -1,8 +1,6 @@
 package com.blog.api.controllers;
 
-import com.blog.api.models.requests.LoginRequest;
 import com.blog.api.models.requests.UserRequest;
-import com.blog.api.models.responses.LoginResponse;
 import com.blog.api.models.responses.UserResponse;
 import com.blog.infrastructure.services.contracts.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,26 +23,24 @@ import org.springframework.web.bind.annotation.RestController;
  */
 
 @RestController
-@RequestMapping("/api/v1/blog/auth")
+@RequestMapping("/api/v1/blog/users")
 @Slf4j
 @RequiredArgsConstructor
-@Tag(name = "BLOG - AUTH")
-public class AuthController {
+@Tag(name = "BLOG - USERS")
+public class UserController {
     private final LoginService loginService;
 
-
-    @PostMapping("/login")
-    @Operation(summary = "servicio para ingreso al sistema",
-            description = "servicio para ingreso al sistema")
+    @PostMapping("/create")
+    @Operation(summary = "servicio para alta de usuarios al sistema",
+            description = "servicio para alta de usuarios al sistema")
     @Parameter(name = "request", description = "datos del usuario")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "ok"),
-            @ApiResponse(responseCode = "401", description = "unauthorized"),
-            @ApiResponse(responseCode = "404", description = "not found"),
+            @ApiResponse(responseCode = "201", description = "created"),
+            @ApiResponse(responseCode = "400", description = "bad request"),
             @ApiResponse(responseCode = "500", description = "internal server error")
     })
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request){
-        log.info("#### endpoint de login ####");
-        return ResponseEntity.ok(loginService.login(request));
+    public ResponseEntity<UserResponse> create(@RequestBody UserRequest request){
+        log.info("#### endpoint alta de usuario ####");
+        return ResponseEntity.status(HttpStatus.CREATED).body(loginService.create(request));
     }
 }

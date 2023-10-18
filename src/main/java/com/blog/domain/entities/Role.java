@@ -1,8 +1,8 @@
 package com.blog.domain.entities;
 
+import com.blog.util.enums.RoleName;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.security.core.GrantedAuthority;
 
 /**
  * @author claudio.vilas
@@ -16,11 +16,12 @@ import org.springframework.security.core.GrantedAuthority;
 @Getter
 @Setter
 @Builder
-public class Role implements GrantedAuthority {
+public class Role  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private String authority;
+    @Enumerated(EnumType.STRING)
+    private RoleName authority;
 
 }
