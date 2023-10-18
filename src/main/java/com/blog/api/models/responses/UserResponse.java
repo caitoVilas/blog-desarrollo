@@ -1,5 +1,7 @@
 package com.blog.api.models.responses;
 
+import com.blog.domain.entities.Role;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Set;
 
 /**
  * @author claudio.vilas
@@ -23,7 +26,9 @@ public class UserResponse implements Serializable {
     private Long id;
     private String username;
     private String email;
-    private Collection<? extends GrantedAuthority> authorities;
+    private Set<Role> authorities;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate createAt;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     private LocalDate updatedAt;
 }
