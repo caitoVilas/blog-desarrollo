@@ -12,4 +12,6 @@ public class UserConstants {
     public static final String U_EMAIL_NO_VALID = "formato de email invalido";
     public static final String U_NAME_EXISTS = "ya se encuentra registrado el nombre: ";
     public static final String U_USER_NOT_FOUND = "usuario no encontrado";
+    public static final String U_ID_NOT_FOUND = "no se encuentra un usuario con id: ";
+    public static final String U_EMAIL_EXISTS = "ya se encuentra registrado el email: ";
 }
