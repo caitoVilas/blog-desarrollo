@@ -31,17 +31,20 @@ public class SecurityConfig {
 
     AuthenticationManager authenticationManager;
 
+    private static final String[] USER_RESOURCES = {"/api/v1/blog/users/**"};
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         AuthenticationManagerBuilder builder = http.getSharedObject(AuthenticationManagerBuilder.class);
         builder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder);
         authenticationManager = builder.build();
-        return http
+         http
                 .csrf(config -> config.disable())
                 .authorizeHttpRequests(auth -> {
                     auth.requestMatchers("/api/v1/blog/auth/**").permitAll();
                     auth.requestMatchers("/api/v1/blog/users/create").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/.well-known/**, ", "/v3/api-docs/**").permitAll();
+                    auth.requestMatchers(USER_RESOURCES).authenticated();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session ->
@@ -49,8 +52,9 @@ public class SecurityConfig {
                 .authenticationManager(authenticationManager)
                 .exceptionHandling(ex ->
                         ex.authenticationEntryPoint(jwtEntryPoint))
-                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .build();
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
+
+         return http.build();
     }
 
 }

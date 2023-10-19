@@ -27,4 +27,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 new BadRequestException(UserConstants.U_USER_NOT_FOUND));
         return Mainuser.build(user);
     }
+
+
 }
