@@ -35,6 +35,9 @@ public class ApplicationUser  {
     private LocalDate createAt;
     @UpdateTimestamp
     private LocalDate updatedAt;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
+               orphanRemoval = true, mappedBy = "user")
+    private Set<Publication> publications;
 
 
 }

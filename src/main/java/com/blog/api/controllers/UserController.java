@@ -101,7 +101,7 @@ public class UserController {
     public ResponseEntity<UserResponse> update(@PathVariable Long id,
                                                @RequestBody UserRequest request){
         log.info("#### endpoint actualizacion de usuario ####");
-        return ResponseEntity.ok(userService.getById(id));
+        return ResponseEntity.ok(userService.update(id, request));
     }
 
     @DeleteMapping("/{id}")

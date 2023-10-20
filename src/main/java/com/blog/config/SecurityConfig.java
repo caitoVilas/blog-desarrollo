@@ -31,7 +31,7 @@ public class SecurityConfig {
 
     AuthenticationManager authenticationManager;
 
-    private static final String[] USER_RESOURCES = {"/api/v1/blog/users/**"};
+    private static final String[] USER_RESOURCES = {"/api/v1/blog/users/**", "/api/v1/blog/publications/**"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -44,7 +44,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/v1/blog/auth/**").permitAll();
                     auth.requestMatchers("/api/v1/blog/users/create").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/.well-known/**, ", "/v3/api-docs/**").permitAll();
-                    auth.requestMatchers(USER_RESOURCES).authenticated();
+                    auth.requestMatchers("/api/v1/blog/users/**").authenticated();
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session ->
