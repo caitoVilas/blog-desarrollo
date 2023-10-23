@@ -45,6 +45,7 @@ public class SecurityConfig {
                     auth.requestMatchers("/api/v1/blog/users/create").permitAll();
                     auth.requestMatchers("/swagger-ui/**", "/.well-known/**, ", "/v3/api-docs/**").permitAll();
                     auth.requestMatchers("/api/v1/blog/users/**").authenticated();
+                    auth.requestMatchers("/api/v1/blog/roles/**").hasRole("ADMIN");
                     auth.anyRequest().authenticated();
                 })
                 .sessionManagement(session ->
