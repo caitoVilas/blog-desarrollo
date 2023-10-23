@@ -38,6 +38,9 @@ public class ApplicationUser  {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
                orphanRemoval = true, mappedBy = "user")
     private Set<Publication> publications;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
+               orphanRemoval = true, mappedBy = "user")
+    private Set<Comment> comments;
 
 
 }
