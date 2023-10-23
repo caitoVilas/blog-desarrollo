@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * @author claudio.vilas
@@ -36,4 +37,7 @@ public class Publication {
     private ApplicationUser user;
     @Column(nullable = false)
     private String document;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,
+               orphanRemoval = true, mappedBy = "publication")
+    private Set<Comment> comments;
 }
